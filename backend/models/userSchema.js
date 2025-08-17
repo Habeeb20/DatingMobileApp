@@ -3,13 +3,13 @@ import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-  phoneNumber: { type: String, required: true },
-  firstName: { type: String, required: true },
-  lastName: { type: String, required: true },
-  profilePicture: { type: String, required: true }, // Cloudinary URL
-  dateOfBirth: { type: Date, required: true },
-  gender: { type: String, required: true, enum: ['male', 'female', 'other'] },
+  password: { type: String,  },
+  phoneNumber: { type: String,  },
+  firstName: { type: String,  },
+  lastName: { type: String,  },
+  profilePicture: { type: String,  }, // Cloudinary URL
+  dateOfBirth: { type: Date,  },
+  gender: { type: String , enum: ['male', 'female', 'other'] },
   interests: [{ type: String }],
   contactsFiltered: [{ type: String }], // Filtered contact emails or IDs
   notificationsEnabled: { type: Boolean, default: false },
