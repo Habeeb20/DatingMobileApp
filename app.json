@@ -4,12 +4,12 @@
     "slug": "letsmeet",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/myLogo.jpg",
     "scheme": "letsmeet",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "splash": {
-      "image": "./assets/images/splash-icon.png",
+      "image":  "./assets/images/myLogo.jpg",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
@@ -18,7 +18,7 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage":  "./assets/images/myLogo.jpg",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true
