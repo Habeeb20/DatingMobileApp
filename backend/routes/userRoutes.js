@@ -30,8 +30,10 @@ router.post('/email', validateEmail, async (req, res) => {
 // Step 2: Verify Code
 router.post('/verify', validateCode, async (req, res) => {
   const { email, code } = req.body;
+  console.log(req.body, "your body")
   try {
     const user = await User.findOne({ email });
+    console.log(user?.email)
     if (!user) return res.status(400).json({ message: 'User not found' });
 
     if (user.verificationCode !== code || user.verificationCodeExpires < new Date()) {
@@ -43,6 +45,7 @@ router.post('/verify', validateCode, async (req, res) => {
     await user.save();
     res.status(200).json({ message: 'Code verified', nextStep: 'phone' });
   } catch (error) {
+    console.log(error)
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
@@ -50,6 +53,7 @@ router.post('/verify', validateCode, async (req, res) => {
 // Step 3: Submit Phone Number
 router.post('/phone', validatePhone, async (req, res) => {
   const { email, phoneNumber } = req.body;
+  console.log(req.body)
   try {
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ message: 'User not found' });
