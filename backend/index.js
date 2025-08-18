@@ -2,11 +2,17 @@ import express from 'express';
 import authRoutes from "./routes/userRoutes.js"
 import connectDB from './config/db.js';
 import bodyParser from 'body-parser';
-
+import cors from "cors"
 import dotenv from 'dotenv';
 
 dotenv.config();
 const app = express();
+
+app.use(cors({
+  origin: 'http://localhost:8081', 
+  methods: ['GET', 'POST', 'OPTIONS'], 
+  allowedHeaders: ['Content-Type', 'Authorization'] 
+}));
 
 app.use(express.json());
 
