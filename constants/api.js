@@ -1,7 +1,8 @@
 import axios from 'axios';
 import Constants from 'expo-constants';
 
-const API_URL = "http://192.168.67.127:5000";
+// const API_URL = "https://datingmobileappbackend.onrender.com/";
+const API_URL = "http://localhost:5000";
 console.log('api.js: API_URL:', API_URL);
 
 const api = axios.create({
@@ -38,23 +39,25 @@ api.interceptors.response.use(
 
 // Onboarding Step 1: Submit Email
 export const submitEmail = (email) =>
-  api.post('/email', { email });
+  api.post('/api/auth/email', { email });
 
 // Onboarding Step 2: Verify Code
 export const verifyCode = (email, code) =>
-  api.post('/verify', { email, code });
+  api.post('/api/auth/verify', { email, code });
 
 // Onboarding Step 3: Submit Phone Number
 export const submitPhone = (email, phoneNumber) =>
-  api.post('/phone', { email, phoneNumber });
+  api.post('/api/auth/phone', { email, phoneNumber });
+export const submitGender = (email, gender) =>
+  api.post('/api/auth/gender', { email, gender });
 
 // Onboarding Step 4: Submit Profile
-export const submitProfile = (email, firstName, lastName, profilePicture, dateOfBirth, gender, password) =>
-  api.post('/profile', { email, firstName, lastName, profilePicture, dateOfBirth, dateOfBirth, gender, password });
+export const submitProfile = (email, firstName, lastName, profilePicture, dateOfBirth) =>
+  api.post('/api/auth/profile', { email, firstName, lastName, profilePicture, dateOfBirth, dateOfBirth});
 
 // Onboarding Step 5: Submit Interests
 export const submitInterests = (email, interests) =>
-  api.post('/interests', { email, interests });
+  api.post('/api/auth/interests', { email, interests });
 
 // Onboarding Step 6: Submit Contacts
 export const submitContacts = (email, contactsFiltered) =>

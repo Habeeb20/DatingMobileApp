@@ -13,7 +13,9 @@ export default function Layout() {
         <Stack.Screen name="emailinput" options={{ headerShown: false }} />
         <Stack.Screen name="codeverification" options={{ headerShown: false }} />
         <Stack.Screen name="profile" options={{ headerShown: false }} />
+        <Stack.Screen name="gender" options={{ headerShown: false }} />
         <Stack.Screen name="interest" options={{ headerShown: false }} />
+        <Stack.Screen name="phone" options={{ headerShown: false }} />
       </Stack>
  
   );

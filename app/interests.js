@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, Image, ScrollView, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, Image, ScrollView, StyleSheet, Alert } from 'react-native';
 import colors from '../colors';
+import { useRouter, useLocalSearchParams } from 'expo-router';
+import { submitInterests } from '../constants/api';
 
 const Interests = ({ navigation }) => {
+  const router = useRouter();
+  const { email } = useLocalSearchParams(); // Retrieve email from route params
   const [selectedInterests, setSelectedInterests] = useState([]);
 
   const interestOptions = [
@@ -15,6 +19,20 @@ const Interests = ({ navigation }) => {
         ? prev.filter((i) => i !== interest)
         : [...prev, interest]
     );
+  };
+
+  const handleNext = async () => {
+    if (selectedInterests.length === 0) {
+      Alert.alert('Error', 'Please select at least one interest');
+      return;
+    }
+    try {
+      await submitInterests(email, selectedInterests);
+      router.push({ pathname: '/contacts', params: { email } });
+    } catch (error) {
+      console.error('Failed to save interests:', error);
+      Alert.alert('Error', 'Failed to save interests');
+    }
   };
 
   return (
@@ -43,7 +61,7 @@ const Interests = ({ navigation }) => {
       </ScrollView>
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate('contacts')}
+        onPress={handleNext}
         disabled={selectedInterests.length === 0}
       >
         <Text style={styles.buttonText}>Next</Text>

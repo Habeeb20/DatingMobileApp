@@ -33,6 +33,12 @@
     ],
     "experiments": {
       "typedRoutes": true
-    }
+    },
+    "expo": {
+    "permissions": [
+      "CAMERA",
+      "CAMERA_ROLL"
+    ]
+  }
   }
 }

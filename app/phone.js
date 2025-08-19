@@ -1,9 +1,35 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import colors from '../colors';
+import { useRouter, useLocalSearchParams } from 'expo-router';
+import { submitPhone } from '../constants/api';
 
 const phone = ({ navigation }) => {
+  const router = useRouter();
+  const { email } = useLocalSearchParams(); // Retrieve email from route params
   const [phone, setPhone] = useState('');
+  const [countryCode, setCountryCode] = useState('+234'); // Static country code for Nigeria
+  const [emailState, setEmailState] = useState(email || ''); 
+
+  console.log(email)
+  useEffect(() => {
+    console.log('phone.js mounted', { emailState, countryCode, phone }); // Debug log
+  }, [emailState, countryCode, phone]);
+
+  // Submit phone number to backend
+  const handleNext = async () => {
+    try {
+      const fullPhoneNumber = `${countryCode}${phone}`;
+      console.log('handleNext called', { emailState, fullPhoneNumber }); // Debug log
+      const response = await submitPhone(emailState, fullPhoneNumber); // Send email and phone
+      console.log('Phone submitted:', response.data);
+      if (response.status === 200) {
+        setTimeout(() => router.push({pathname:'/profile', params: {email: emailState}}), 1500);
+      }
+    } catch (error) {
+      console.error('Phone submission failed:', error);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -13,17 +39,20 @@ const phone = ({ navigation }) => {
         resizeMode="contain"
       />
       <Text style={styles.title}>Enter your phone number</Text>
-      <TextInput
-        style={styles.input}
-        value={phone}
-        onChangeText={setPhone}
-        placeholder="+1234567890"
-        placeholderTextColor={colors.textSecondary}
-        keyboardType="phone-pad"
-      />
+      <View style={styles.phoneInputContainer}>
+        <Text style={styles.countryCodeText}>{countryCode}</Text> {/* Static country code */}
+        <TextInput
+          style={styles.input}
+          value={phone}
+          onChangeText={setPhone}
+          placeholder="1234567890"
+          placeholderTextColor={colors.textSecondary}
+          keyboardType="phone-pad"
+        />
+      </View>
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate('signup')}
+        onPress={handleNext}
       >
         <Text style={styles.buttonText}>Next</Text>
       </TouchableOpacity>
@@ -52,14 +81,29 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 40,
   },
-  input: {
+  phoneInputContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
     width: '80%',
+    marginBottom: 20,
+  },
+  countryCodeText: {
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderWidth: 1,
+    borderColor: colors.textSecondary,
+    borderRadius: 25,
+    marginRight: 10,
+    color: colors.textPrimary,
+    fontSize: 16,
+  },
+  input: {
+    flex: 1,
     height: 50,
     borderColor: colors.textSecondary,
     borderWidth: 1,
     borderRadius: 25,
     paddingHorizontal: 15,
-    marginBottom: 20,
     color: colors.textPrimary,
   },
   button: {

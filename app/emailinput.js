@@ -14,8 +14,10 @@ import {
 } from 'react-native';
 import colors from '../colors';
 import { submitEmail } from '../constants/api';
+import { useRouter } from 'expo-router'; // Import useRouter
 
-const emailInput = ({ navigation }) => {
+const emailInput = () => {
+  const router = useRouter(); // Use useRouter instead of navigation prop
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
   const [notification, setNotification] = useState({ visible: false, message: '', isSuccess: true });
@@ -35,7 +37,7 @@ const emailInput = ({ navigation }) => {
       console.log('Email submitted:', response.data);
       if (response.status === 200) {
         setNotification({ visible: true, message: 'Email submitted successfully!', isSuccess: true });
-        setTimeout(() => navigation.navigate('onboarding2'), 1500); // Navigate after 1.5s
+        setTimeout(() => router.push({ pathname: '/codeverification', params: { email } }), 1500);
       }
     } catch (error) {
       console.error('Email submission failed:', error);
@@ -173,7 +175,6 @@ const styles = StyleSheet.create({
   },
   notification: {
     position: 'absolute',
-
     bottom: 20,
     left: 20,
     right: 20,

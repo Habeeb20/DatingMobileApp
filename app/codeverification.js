@@ -1,9 +1,29 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import colors from '../colors';
+import { useRouter, useLocalSearchParams } from 'expo-router'; // Import useLocalSearchParams
+import { verifyCode } from '../constants/api'; // Import the API function
 
 const codeverification = ({ navigation }) => {
+  const router = useRouter();
+  const { email } = useLocalSearchParams(); // Retrieve email from route params
   const [code, setCode] = useState('');
+  const [emailState, setEmailState] = useState(email || ''); 
+
+
+
+  // Verify code and navigate
+  const handleVerify = async () => {
+    try {
+      const response = await verifyCode(emailState, code); 
+      console.log('Code verified:', response.data);
+      if (response.status === 200) {
+            setTimeout(() => router.push({ pathname: '/phone', params: { email: emailState } }), 1500); 
+      }
+    } catch (error) {
+      console.error('Code verification failed:', error);
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -26,7 +46,7 @@ const codeverification = ({ navigation }) => {
       />
       <TouchableOpacity
         style={styles.button}
-        onPress={() => navigation.navigate('onboarding3')}
+        onPress={handleVerify}
       >
         <Text style={styles.buttonText}>Verify</Text>
       </TouchableOpacity>
