@@ -19,8 +19,8 @@ export const validatePhone = (req, res, next) => {
 };
 
 export const validateProfile = (req, res, next) => {
-  const { firstName, lastName, profilePicture, dateOfBirth, gender } = req.body;
-  if (!firstName || !lastName || !profilePicture || !dateOfBirth || !gender) {
+  const { firstName, lastName, profilePicture, dateOfBirth } = req.body;
+  if (!firstName || !lastName || !profilePicture || !dateOfBirth ) {
     return res.status(400).json({ message: 'All profile fields are required' });
   }
   next();

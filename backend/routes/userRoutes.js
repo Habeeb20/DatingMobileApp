@@ -2,7 +2,7 @@ import express from 'express';
 import { sendVerificationCode } from '../config/email.js';
 import User from '../models/userSchema.js';
 import  { validateEmail, validateCode, validatePhone, validateProfile, validatePassword }  from '../middlewares/validation.js';
-
+import bcrypt from "bcrypt"
 import jwt from 'jsonwebtoken';
 
 const router = express.Router();
@@ -99,27 +99,49 @@ router.post('/contacts', async (req, res) => {
 });
 
 
-router.post('/profile', validateProfile, validatePassword, async (req, res) => {
-  const { email, firstName, lastName, profilePicture, dateOfBirth, gender, password } = req.body;
+router.post('/profile', validateProfile, async (req, res) => {
+  
+  const { email, firstName, lastName, profilePicture, dateOfBirth,  password } = req.body;
+  console.log(req.body)
   try {
     const user = await User.findOne({ email });
+    console.log("email not found")
     if (!user) return res.status(400).json({ message: 'User not found' });
 
-    const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+
 
     user.firstName = firstName;
     user.lastName = lastName;
     user.profilePicture = profilePicture;
     user.dateOfBirth = new Date(dateOfBirth);
-    user.gender = gender;
-    user.password = hashedPassword;
+  
+    user.password = password
     await user.save();
-    res.status(200).json({ message: 'Profile and password saved', nextStep: 'interests' });
+    res.status(200).json({ message: 'Profile and password saved', nextStep: 'gender' });
   } catch (error) {
+    console.log(error)
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
+
+
+router.post('/gender', async(req, res) => {
+  const {email, gender} = req.body;
+  console.log(req.body)
+  try {
+    const user = await User.findOne({email});
+    if(!user) return res.status(400).json({message: "email doesnt exist or not found"})
+
+
+    user.gender = gender
+    await user.save()
+      res.status(200).json({ message: 'Phone number saved', nextStep: 'interests' });
+  } catch (error) {
+    console.log(error)
+      res.status(500).json({ message: 'Server error', error: error.message });
+  }
+})
+
 
 // ... Keep interests, contacts as is
 
