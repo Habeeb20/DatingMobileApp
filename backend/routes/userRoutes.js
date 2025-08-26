@@ -4,7 +4,7 @@ import User from '../models/userSchema.js';
 import  { validateEmail, validateCode, validatePhone, validateProfile, validatePassword }  from '../middlewares/validation.js';
 import bcrypt from "bcrypt"
 import jwt from 'jsonwebtoken';
-
+import { transporter } from '../config/email.js';
 const router = express.Router();
 
 // Step 1: Submit Email
@@ -174,22 +174,59 @@ router.post('/notifications', async (req, res) => {
   }
 });
 
-// New Login Route
+
+
+
+
+
 router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
+  const { email, token: inputToken } = req.body;
+
   try {
     const user = await User.findOne({ email });
     if (!user) return res.status(400).json({ message: 'User not found' });
 
-    const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
+    // Step 1: If no token is provided, generate and send a new one
+    if (!inputToken) {
+      const verificationToken = Math.floor(1000 + Math.random() * 9000).toString(); // 4-digit token
+      user.verificationCode = verificationToken;
+      user.verificationCodeExpires = Date.now() + 10 * 60 * 1000; 
+      await user.save();
 
-    const token = jwt.sign({ email: user.email, id: user._id }, process.env.JWT_SECRET, {
+      const mailOptions = {
+        from: process.env.EMAIL_USER,
+        to: email,
+        subject: 'Your Login Verification Code',
+        text: `Your verification code is ${verificationToken}. It expires in 10 minutes.`,
+      };
+
+      await transporter.sendMail(mailOptions);
+      return res.status(200).json({ message: 'Verification code sent to your email' });
+    }
+
+    // Step 2: Verify the token
+    if (user.verificationCode !== inputToken || Date.now() > user.verificationCodeExpires) {
+      return res.status(400).json({ message: 'Invalid or expired verification code' });
+    }
+
+    // Step 3: Clear verification token and issue JWT
+    user.verificationCode = undefined;
+    user.verificationCodeExpires = undefined;
+    await user.save();
+
+  
+
+    const jwtToken = jwt.sign({ email: user.email, id: user._id }, process.env.JWT_SECRET, {
       expiresIn: '1h',
     });
-    res.status(200).json({ message: 'Login successful', token });
+    res.status(200).json({ message: 'Login successful', token: jwtToken, nextStep: 'dashboard' });
   } catch (error) {
+    console.error('Login error:', error);
     res.status(500).json({ message: 'Server error', error: error.message });
   }
 });
+
+
+
+
 export default router;
