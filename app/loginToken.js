@@ -1,43 +1,44 @@
 // import React, { useState } from 'react';
 // import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Alert } from 'react-native';
 // import colors from '../colors';
-// import { useRouter } from 'expo-router';
+// import { useRouter, useLocalSearchParams } from 'expo-router';
 // import { submitLogin } from '../constants/api';
 
-
-// const Signin = () => {
+// const LoginToken = () => {
 //   const router = useRouter();
-//   const [email, setEmail] = useState('');
+//   const { email } = useLocalSearchParams();
+//   const [token, setToken] = useState('');
 
-//   const handleNext = async () => {
-//     if (!email.trim()) {
-//       Alert.alert('Error', 'Please enter your email');
+//   const handleLogin = async () => {
+//     if (!token.trim() || token.length !== 4) {
+//       Alert.alert('Error', 'Please enter a 4-digit code');
 //       return;
 //     }
 //     try {
-//       await submitLogin({ email });
-//       router.push({ pathname: '/loginToken', params: { email } });
+//       const response = await submitLogin({ email, token });
+//       router.push({ pathname: '/dashboard', params: { token: response.data.token } });
 //     } catch (error) {
-//       console.error('Login error:', error);
-//       Alert.alert('Error', error.response?.data?.message || 'Failed to send verification code');
+//       console.error('Token verification error:', error);
+//       Alert.alert('Error', error.response?.data?.message || 'Invalid or expired code');
 //     }
 //   };
 
 //   return (
 //     <View style={styles.container}>
 //       <Image source={require('../assets/images/datingLogo.jpeg')} style={styles.logo} resizeMode="contain" />
-//       <Text style={styles.title}>Enter your email</Text>
+//       <Text style={styles.title}>Enter verification code</Text>
+//       <Text style={styles.subtitle}>Check your email for the 4-digit code</Text>
 //       <TextInput
 //         style={styles.input}
-//         value={email}
-//         onChangeText={setEmail}
-//         placeholder="Email"
-//         keyboardType="email-address"
-//         autoCapitalize="none"
+//         value={token}
+//         onChangeText={setToken}
+//         placeholder="1234"
+//         keyboardType="numeric"
+//         maxLength={4}
 //         placeholderTextColor={colors.textSecondary}
 //       />
-//       <TouchableOpacity style={styles.button} onPress={handleNext}>
-//         <Text style={styles.buttonText}>Next</Text>
+//       <TouchableOpacity style={styles.button} onPress={handleLogin}>
+//         <Text style={styles.buttonText}>Verify</Text>
 //       </TouchableOpacity>
 //     </View>
 //   );
@@ -63,6 +64,12 @@
 //     fontWeight: 'bold',
 //     color: colors.textPrimary,
 //     textAlign: 'center',
+//     marginBottom: 10,
+//   },
+//   subtitle: {
+//     fontSize: 16,
+//     color: colors.textSecondary,
+//     textAlign: 'center',
 //     marginBottom: 40,
 //   },
 //   input: {
@@ -76,6 +83,7 @@
 //     fontSize: 16,
 //     borderWidth: 1,
 //     borderColor: colors.textSecondary,
+//     textAlign: 'center',
 //   },
 //   button: {
 //     backgroundColor: colors.primary,
@@ -97,31 +105,35 @@
 //   },
 // });
 
-// export default Signin;
+// export default LoginToken;
+
+
 
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, Alert, ActivityIndicator } from 'react-native';
 import colors from '../colors';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { submitLogin } from '../constants/api';
 
-const Signin = () => {
+const LoginToken = () => {
   const router = useRouter();
-  const [email, setEmail] = useState('');
+  const { email } = useLocalSearchParams();
+  const [token, setToken] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleNext = async () => {
-    if (!email.trim()) {
-      Alert.alert('Error', 'Please enter your email');
+  const handleLogin = async () => {
+    if (!token.trim() || token.length !== 4) {
+      Alert.alert('Error', 'Please enter a 4-digit code');
       return;
     }
     setIsLoading(true);
     try {
-      await submitLogin({ email });
-      router.push({ pathname: '/loginToken', params: { email } });
+      const response = await submitLogin({ email, token });
+      console.log(response, "your data!!!");
+      router.push({ pathname: '/dashboard', params: { token: response?.token } }); 
     } catch (error) {
-      console.error('Login error:', error);
-      Alert.alert('Error', error.response?.data?.message || 'Failed to send verification code');
+      console.error('Token verification error:', error);
+      Alert.alert('Error', error.response?.data?.message || 'Invalid or expired code');
     } finally {
       setIsLoading(false);
     }
@@ -130,21 +142,22 @@ const Signin = () => {
   return (
     <View style={styles.container}>
       <Image source={require('../assets/images/datingLogo.jpeg')} style={styles.logo} resizeMode="contain" />
-      <Text style={styles.title}>Enter your email</Text>
+      <Text style={styles.title}>Enter verification code</Text>
+      <Text style={styles.subtitle}>Check your email for the 4-digit code</Text>
       <TextInput
         style={styles.input}
-        value={email}
-        onChangeText={setEmail}
-        placeholder="Email"
-        keyboardType="email-address"
-        autoCapitalize="none"
+        value={token}
+        onChangeText={setToken}
+        placeholder="1234"
+        keyboardType="numeric"
+        maxLength={4}
         placeholderTextColor={colors.textSecondary}
       />
-      <TouchableOpacity style={styles.button} onPress={handleNext} disabled={isLoading}>
+      <TouchableOpacity style={styles.button} onPress={handleLogin} disabled={isLoading}>
         {isLoading ? (
           <ActivityIndicator size="small" color={colors.buttonText} />
         ) : (
-          <Text style={styles.buttonText}>Next</Text>
+          <Text style={styles.buttonText}>Verify</Text>
         )}
       </TouchableOpacity>
     </View>
@@ -171,6 +184,12 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: colors.textPrimary,
     textAlign: 'center',
+    marginBottom: 10,
+  },
+  subtitle: {
+    fontSize: 16,
+    color: colors.textSecondary,
+    textAlign: 'center',
     marginBottom: 40,
   },
   input: {
@@ -184,6 +203,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     borderWidth: 1,
     borderColor: colors.textSecondary,
+    textAlign: 'center',
   },
   button: {
     backgroundColor: colors.primary,
@@ -205,4 +225,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default Signin;
+export default LoginToken;

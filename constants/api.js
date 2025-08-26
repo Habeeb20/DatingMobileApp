@@ -68,8 +68,10 @@ export const toggleNotifications = (email, notificationsEnabled) =>
   api.post('/notifications', { email, notificationsEnabled });
 
 // Login
-export const login = (email, password) =>
-  api.post('/login', { email, password });
+export const submitLogin = async (data) => {
+  const response = await api.post('/api/auth/login', data);
+  return response.data;
+};
 
 
 export default api;

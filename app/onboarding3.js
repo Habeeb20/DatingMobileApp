@@ -31,7 +31,7 @@ const Onboarding3 = () => {
       <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('signup')}>
         <Text style={styles.buttonText}>Create an account</Text>
       </TouchableOpacity>
-      <TouchableOpacity onPress={() => router.push('/SignIn')}>
+      <TouchableOpacity onPress={() => router.push('/signin')}>
         <Text style={styles.link}>Already have an account? Sign In</Text>
       </TouchableOpacity>
     </View>
