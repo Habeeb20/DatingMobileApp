@@ -1,7 +1,7 @@
 import express from 'express';
 import { sendVerificationCode } from '../config/email.js';
 import User from '../models/userSchema.js';
-import  { validateEmail, validateCode, validatePhone, validateProfile, validatePassword }  from '../middlewares/validation.js';
+import  { validateEmail, validateCode, validatePhone, validateProfile, validatePassword, verifyToken }  from '../middlewares/validation.js';
 import bcrypt from "bcrypt"
 import jwt from 'jsonwebtoken';
 import { transporter } from '../config/email.js';
@@ -227,6 +227,19 @@ router.post('/login', async (req, res) => {
 });
 
 
+router.get("/dashboard", verifyToken, async(req, res) => {
+  const userId = req.user.id 
+
+  try {
+    const user = await User.findOne({_id: userId})
+    if(!user)return res.status(404).json({message: "user data not found"})
+
+    return res.status(200).json(user)
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({message :"an error occurred in the server"})
+  }
+} )
 
 
 export default router;

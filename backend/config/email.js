@@ -13,7 +13,7 @@ export const transporter = nodemailer.createTransport({
 
 const sendVerificationCode = async (email, code) => {
   const mailOptions = {
-    from: process.env.EMAIL_USER,
+    from:`"LetMeet" <${EMAIL_USER}>`,
     to: email,
     subject: 'Your Verification Code',
     text: `Your verification code is ${code}. It expires in 10 minutes.`,
@@ -29,3 +29,8 @@ const sendVerificationCode = async (email, code) => {
 };
 
 export { sendVerificationCode };
+
+
+
+
+
