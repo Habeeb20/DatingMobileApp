@@ -1,7 +1,42 @@
-import { Stack } from 'expo-router';
-
+import { Stack, useRouter } from 'expo-router';
+import { View, StatusBar } from 'react-native';
+import { useState, useEffect } from 'react';
+import LoveLoader from "./others/LoveLoader"
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Layout() {
+  const router = useRouter()
+   const [isLoading, setIsLoading] = useState(true);
+     const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+     useEffect(() => {
+    const timer = setTimeout(() => setIsLoading(false), 2000); // Hide after 2s
+    return () => clearTimeout(timer);
+  }, []);
+
+
+   useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const token = await AsyncStorage.getItem('authToken');
+        if (token) {
+          setIsAuthenticated(true);
+          router.replace('/dashboard'); 
+        } else {
+          router.replace('/signin'); 
+        }
+      } catch (err) {
+        console.error('Auth check error:', err);
+        router.replace('/signin');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    checkAuth();
+  }, []);
+
+    if (isLoading) return <LoveLoader visible={true} />;
+
   return (
 
       <Stack>
@@ -18,8 +53,16 @@ export default function Layout() {
         <Stack.Screen name="phone" options={{ headerShown: false }} />
         <Stack.Screen name="loginToken" options={{ headerShown: false }} />
         <Stack.Screen name="dashboard" options={{ headerShown: false }} />
-        
+        <Stack.Screen name="matches" options={{ headerShown: false }} />
+        <Stack.Screen name="messages" options={{ headerShown: false }} />
+        <Stack.Screen name="social" options={{ headerShown: false }} />
+        <Stack.Screen name="mydata" options={{ headerShown: false }} />
+        <Stack.Screen name="discover" options={{ headerShown: false }} />
+          
       </Stack>
  
   );
 }
+
+
+

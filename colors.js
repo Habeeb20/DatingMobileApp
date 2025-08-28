@@ -6,6 +6,7 @@ const colors = {
   background: '#FFFFFF',
   accent: '#FFA500',
   buttonText: '#FFFFFF',
+  heart: '#ff4d4d',
 };
 
 export default colors;
