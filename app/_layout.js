@@ -1,7 +1,7 @@
 import { Stack, useRouter } from 'expo-router';
 import { View, StatusBar } from 'react-native';
 import { useState, useEffect } from 'react';
-import LoveLoader from "./others/LoveLoader"
+// import LoveLoader from "./others/LoveLoader"
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Layout() {
@@ -35,7 +35,7 @@ export default function Layout() {
     checkAuth();
   }, []);
 
-    if (isLoading) return <LoveLoader visible={true} />;
+    // if (isLoading) return <LoveLoader visible={true} />;
 
   return (
 
@@ -58,6 +58,7 @@ export default function Layout() {
         <Stack.Screen name="social" options={{ headerShown: false }} />
         <Stack.Screen name="mydata" options={{ headerShown: false }} />
         <Stack.Screen name="discover" options={{ headerShown: false }} />
+        {/* <Stack.Screen name="interest" options={{ headerShown: false }} /> */}
           
       </Stack>
  
